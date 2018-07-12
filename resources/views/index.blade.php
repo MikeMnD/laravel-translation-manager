@@ -453,7 +453,12 @@
 
         <?php foreach($translations as $key => $translation): ?>
             <tr id="<?= $key ?>">
-                <td><?= $key ?></td>
+
+                @if(setting('manage.translation.showKeyColumn'))
+                <td>
+                   {{ $key }}
+                </td>
+               @endif
                 <?php foreach($locales as $locale): ?>
                     <?php $t = isset($translation[$locale]) ? $translation[$locale] : null?>
 
