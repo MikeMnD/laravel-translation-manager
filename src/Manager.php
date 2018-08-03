@@ -313,4 +313,32 @@ class Manager{
         }
     }
 
+    public function getLocales()
+    {
+        //Set the default locale as the first one.
+        $locales = Translation::groupBy('locale')
+            ->select('locale')
+            ->get()
+            ->pluck('locale');
+
+        /// if locales is set in ENV file get them instead defalt
+        if (!is_null(env('SUPPORTED_LOCALES')) && !empty(env('SUPPORTED_LOCALES')))
+        {
+            $locales = preg_split("/[,]/",env('SUPPORTED_LOCALES'));
+            $languages = setting(env('APP_THEME').'.manage.translation.languageColumns');
+
+            if (!empty($languages) && $languages !== '')
+            {
+                $languages = preg_split("/[,]/",$languages);
+                $locales = array_merge( $languages, $locales);
+            }
+        } else {
+            if ($locales instanceof Collection) {
+                $locales = $locales->all();
+            }
+            $locales = array_merge(['en'], $locales);
+        }
+        return array_unique($locales);
+    }
+
 }
