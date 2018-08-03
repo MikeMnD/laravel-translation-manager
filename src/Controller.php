@@ -29,15 +29,20 @@ class Controller extends BaseController
             $groups = $groups->all();
         }
         $groups = [''=>'Choose a group'] + $groups;
-        $numChanged = Translation::where('group', $group)->where('status', Translation::STATUS_CHANGED)->count();
 
-
-        $allTranslations = Translation::where('group', $group)->orderBy('key', 'asc')->get();
-        $numTranslations = count($allTranslations);
+        $numChanged = 0;
+        $numTranslations = 0;
         $translations = [];
-        foreach($allTranslations as $translation){
-            $translations[$translation->key][$translation->locale] = $translation;
+
+        if(!is_null($group)) {
+            $numChanged = Translation::where('group', $group)->where('status', Translation::STATUS_CHANGED)->count();
+            $allTranslations = Translation::where('group', $group)->orderBy('key', 'asc')->get();
+            $numTranslations = count($allTranslations);
+            foreach($allTranslations as $translation){
+                $translations[$translation->key][$translation->locale] = $translation;
+            }
         }
+
 
          return view('translation-manager::index')
             ->with('translations', $translations)
