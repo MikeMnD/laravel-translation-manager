@@ -46,6 +46,7 @@ class Manager{
         $theme = config('themes.default', 'default');
 
         foreach ($this->files->directories($this->app['path.lang']) as $langPath) {
+
             $locale = basename($langPath);
 
             if (in_array($locale, ['vendor', 'themes'])) {
@@ -77,7 +78,7 @@ class Manager{
         }
 
         //DO THE SAME BUT ONLY FOR THE CURRENT THEME
-        foreach ($this->files->directories($this->app['path.lang'].'/themes/'.$theme) as $langPath) {
+        foreach ($this->files->directories($this->app['path.lang'].'/lang-themes/'.$theme) as $langPath) {
             $locale = basename($langPath);
 
             foreach ($this->files->allfiles($langPath) as $file) {
@@ -96,7 +97,7 @@ class Manager{
 
                 if ($translations && is_array($translations)) {
                     foreach (array_dot($translations) as $key => $value) {
-                        $importedTranslation = $this->importTranslation($key, $value, $locale, $group, true);
+                        $importedTranslation = $this->importTranslation($key, $value, $locale, $group, $replace);
                         $counter += $importedTranslation ? 1 : 0;
                     }
                 }
