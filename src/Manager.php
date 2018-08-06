@@ -78,7 +78,7 @@ class Manager{
         }
 
         //DO THE SAME BUT ONLY FOR THE CURRENT THEME
-        foreach ($this->files->directories($this->app['path.lang'].'/lang-themes/'.$theme) as $langPath) {
+        foreach ($this->files->directories($this->app['path.lang'].'-themes/'.$theme) as $langPath) {
             $locale = basename($langPath);
 
             foreach ($this->files->allfiles($langPath) as $file) {
