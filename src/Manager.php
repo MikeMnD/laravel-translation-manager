@@ -340,5 +340,73 @@ class Manager{
         }
         return array_unique($locales);
     }
+    
+        public function getDefaultVSThemeTranslationsDiff(){
+
+        $theme = config('themes.default', 'default');
+
+        $default_translations = [];
+        $theme_translations = [];
+
+        foreach ($this->files->directories($this->app['path.lang']) as $langPath) {
+
+            $locale = basename($langPath);
+
+            if (in_array($locale, ['vendor', 'themes'])) {
+                continue;
+            }
+
+            foreach ($this->files->allfiles($langPath) as $file) {
+                $info = pathinfo($file);
+                $group = $info['filename'];
+                if (in_array($group, $this->config['exclude_groups'])) {
+                    continue;
+                }
+
+                $subLangPath = str_replace($langPath . DIRECTORY_SEPARATOR, "", $info['dirname']);
+
+                if ($subLangPath != $langPath) {
+                    $group = $subLangPath . "/" . $group;
+                }
+                $translations = \Lang::getLoader()->load($locale, $group);
+
+                if ($translations && is_array($translations) && count($translations) > 0) {
+                    $default_translations[$group] = $translations;
+                }
+
+            }
+        }
+
+        //DO THE SAME BUT ONLY FOR THE CURRENT THEME
+        foreach ($this->files->directories($this->app['path.lang'].'/themes/'.$theme) as $langPath) {
+            $locale = basename($langPath);
+
+            foreach ($this->files->allfiles($langPath) as $file) {
+                $info = pathinfo($file);
+                $group = $info['filename'];
+                if (in_array($group, $this->config['exclude_groups'])) {
+                    continue;
+                }
+
+                $subLangPath = str_replace($langPath . DIRECTORY_SEPARATOR, "", $info['dirname']);
+                if ($subLangPath != $langPath) {
+                    $group = $subLangPath . "/" . $group;
+                }
+                //todo
+                $translations = \Lang::getLoader()->load($locale, $group, $theme);
+
+                if ($translations && is_array($translations)) {
+                    foreach (array_dot($translations) as $key => $value) {
+                        $theme_translations[$group] = $translations;
+                    }
+                }
+            }
+        }
+
+        $dotted_theme_translations =  array_dot($theme_translations);
+        $dotted_default_translations = array_dot($default_translations);
+        $diff_translations = array_diff_assoc($dotted_theme_translations, $dotted_default_translations);
+        return $diff_translations;
+    }
 
 }
