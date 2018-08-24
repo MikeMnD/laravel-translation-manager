@@ -340,14 +340,15 @@ class Manager{
         }
         return array_unique($locales);
     }
-    
-        public function getDefaultVSThemeTranslationsDiff(){
+
+    public function getDefaultVSThemeTranslationsDiff(){
 
         $theme = config('themes.default', 'default');
 
         $default_translations = [];
         $theme_translations = [];
 
+        //LOOP TROUGH THE SAME BUT ONLY FOR THE CURRENT THEME
         foreach ($this->files->directories($this->app['path.lang']) as $langPath) {
 
             $locale = basename($langPath);
@@ -371,7 +372,7 @@ class Manager{
                 $translations = \Lang::getLoader()->load($locale, $group);
 
                 if ($translations && is_array($translations) && count($translations) > 0) {
-                    $default_translations[$group] = $translations;
+                    $default_translations[$locale][$group] = $translations;
                 }
 
             }
@@ -397,7 +398,7 @@ class Manager{
 
                 if ($translations && is_array($translations)) {
                     foreach (array_dot($translations) as $key => $value) {
-                        $theme_translations[$group] = $translations;
+                        $theme_translations[$locale][$group] = $translations;
                     }
                 }
             }
