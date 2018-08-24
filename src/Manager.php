@@ -69,7 +69,7 @@ class Manager{
 
                 if ($translations && is_array($translations) && count($translations) > 0) {
                     foreach (array_dot($translations) as $key => $value) {
-                        $importedTranslation = $this->importTranslation($key, $value, $locale, $group, $replace);
+                        $importedTranslation = $this->importTranslation($key, $value, $locale, $group, false);
                         $counter += $importedTranslation ? 1 : 0;
                     }
                 }
